@@ -23,7 +23,7 @@ def projectSearch(fields, url):
     optionsStateAdded=optionsState[:]
     optionsStateAdded.insert(0, OPTION('- All -', _value='0'))
 
-    form = FORM(
+    form = FORM(DIV(
         LABEL(' '),        
         'Project Type: ', SELECT(_name='projectType', _id="projectType", 
                        _style="width:150px;", 
@@ -36,8 +36,8 @@ def projectSearch(fields, url):
         INPUT(_name='searchText',_value=session.searchValues['Project']['Name'],
               _style='width:200px;',
               _id='searchText', _placeholder='Type the Project name'),
-        INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class=''),
-        INPUT(_type='submit',_value=T('Clear'), _name='btclear'),
+        INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class='btn-primary'),
+        INPUT(_type='submit',_value=T('Clear'), _name='btclear', _class=''), _id="filters", _class='divfilters'),
         _id='projectSearch',
         _action=url, _method='post')
     
@@ -48,10 +48,10 @@ def projects_list():
     queries = []
     constraints = None
 
-    #  Get filters
     if not session.searchValues:
         session.searchValues = dict(Project={'TypeId':'', 'StateId':'', 'Name':''})
 
+    #  Get filters
     projectTypeId = session['searchValues']['Project']['TypeId']
     projectStateId = session['searchValues']['Project']['StateId']
     searchText = session['searchValues']['Project']['Name']
@@ -98,14 +98,14 @@ def projects_list():
 
     #Define the fields to show on grid.
     fields = (db.Project.Description,
-    	db.Project.Code,
-    	db.Project_Type.Name,
-    	db.Project_State.Name,
-    	db.Project.StartDate,
-    	db.Project.EndDate,
-    	db.Project.Created_by,
-    	db.Project.Created_on,
-    	db.Project.isActive)
+        db.Project.Code,
+        db.Project_Type.Name,
+        db.Project_State.Name,
+        db.Project.StartDate,
+        db.Project.EndDate,
+        db.Project.Created_by,
+        db.Project.Created_on,
+        db.Project.isActive)
 
     #Define headers as tuples/dictionaries
     headers = {
@@ -121,12 +121,12 @@ def projects_list():
     searchForms = {'Project':projectSearch}
 
     #links = [lambda row: A('View Team',_href=URL("project","projects_edit",args=[row.id]))]
-    links = [lambda row: A(SPAN(_class='icon magnifier'),'Team',_class='w2p_trap button btn',_title='View  Team',
-    	_href=URL("team","team_project_list",args=[row.Project.id]))]
+    links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
+        _href=URL("team","team_project_list",args=[row.Project.id]))]
 
     #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, 
-    	deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
+        deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
         search_widget=searchForms)
 
     return dict(projects=project)
@@ -134,7 +134,5 @@ def projects_list():
 
 @auth.requires_membership('Manager')
 def projects_edit():
-	# create an insert form from the table
+    # create an insert form from the table
     form = SQLFORM(db.Project).process()
-    return dict(form=form)
-

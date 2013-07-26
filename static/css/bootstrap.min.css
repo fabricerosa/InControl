@@ -6631,13 +6631,48 @@ div.subnav-fixed {
 }
 
 /*  Custom buttons */
-
 .search{
+  display: inline-block;
+  width: 32px;
+  height: 30px;
+  margin-top: -15px;
+  *margin-right: .3em;  
+  vertical-align: text-top;  
   background-image: url("../images/search.png");
+  background-position: 14px 14px;
   background-repeat: no-repeat;
-  height: 14px;
-  line-height: 14px;
-  margin-top: 1px;
-  vertical-align: text-top;
-  width: 14px;
+  margin-left: -15px;
+}
+
+.team{ 
+  display: inline-block;
+  width: 32px;
+  height: 30px;
+  margin-top: -15px;
+  *margin-right: .3em;  
+  vertical-align: text-top;  
+  background-image: url("../images/team.png");
+  background-position: 14px 14px;
+  background-repeat: no-repeat;
+  margin-left: -15px;
+}
+
+.clean{
+  display: inline-block;
+  width: 32px;
+  height: 30px;
+  margin-top: -15px;
+  *margin-right: .3em;  
+  vertical-align: text-top;  
+  background-image: url("../images/clean.png");
+  background-position: 14px 14px;
+  background-repeat: no-repeat;
+  margin-left: -15px;
+}
+
+
+.divfilters{
+   background-color: #FAFAFA;
+   padding: 10px;
+   margin-top: 10px;
 }
