@@ -102,16 +102,12 @@ db.define_table(
         Field('Name', required=True),
         Field('isActive', 'boolean', default=True)
         )
-if db(db.Project_Type).isempty():
-        db.Project_Type.bulk_insert([{'Name':'T&M'}, {'Name':'Agile'}, {'Name':'Product'}, {'Name':'Internal'}])
 
 db.define_table(
         'Project_State',
         Field('Name', required=True),
         Field('isActive', 'boolean', default=True)
         )
-if db(db.Project_State).isempty():
-        db.Project_State.bulk_insert([{'Name':'Forecast'}, {'Name':'Active'}, {'Name':'Suspended'}, {'Name':'Canceled'}])
 
 db.define_table(
         'Project',
@@ -157,8 +153,6 @@ db.Project.Created_by.writable = False
 db.Project.Created_on.readable = False
 db.Project.Created_on.writable = False
 db.Project.id.readable=False
-db.Project.Code.searchable=False
-
 
 
 db.Team.RoleId.requires = IS_IN_DB(db, 'Role.id', 'Role.Name')

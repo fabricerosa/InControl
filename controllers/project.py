@@ -36,7 +36,7 @@ def projectSearch(fields, url):
         INPUT(_name='searchText',_value=session.searchValues['Project']['Name'],
               _style='width:200px;',
               _id='searchText', _placeholder='Type the Project name'),
-        INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class='btn-primary'),
+        INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class=''),
         INPUT(_type='submit',_value=T('Clear'), _name='btclear', _class=''), _id="filters", _class='divfilters'),
         _id='projectSearch',
         _action=url, _method='post')
