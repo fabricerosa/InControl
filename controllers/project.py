@@ -120,6 +120,8 @@ def projects_list():
 
     searchForms = {'Project':projectSearch}
 
+    formargs={'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target=balnk)}, 'comments' : True}
+
     #links = [lambda row: A('View Team',_href=URL("project","projects_edit",args=[row.id]))]
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
         _href=URL("team","team_project_list",args=[row.Project.id]))]
@@ -127,12 +129,13 @@ def projects_list():
     #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, 
         deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms)
+        search_widget=searchForms, formargs = formargs)
 
-    return dict(projects=project)
+    title='Project List'
 
+    if  len(request.args)>1 and request.args[-2]=='new' and project.create_form:
+        title = 'New Project'
 
-@auth.requires_membership('Manager')
-def projects_edit():
-    # create an insert form from the table
-    form = SQLFORM(db.Project).process()
+    print title
+
+    return dict(projects=project, titles=title)
