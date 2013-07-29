@@ -33,7 +33,7 @@ def projectSearch(fields, url):
                        _style="width:150px;", 
                        value=session.searchValues['Project']['StateId'],
                        *optionsStateAdded),
-        INPUT(_name='searchText',_value=session.searchValues['Project']['Name'],
+        INPUT(_name='searchText',_value=session.searchValues['Project']['Description'],
               _style='width:200px;',
               _id='searchText', _placeholder='Type the Project name'),
         INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class=''),
@@ -43,18 +43,23 @@ def projectSearch(fields, url):
     
     return form
 
+def identification(row):
+    ident= row.Project.id   
+    return ident
+
+
 def projects_list():
 
     queries = []
     constraints = None
 
     if not session.searchValues:
-        session.searchValues = dict(Project={'TypeId':'', 'StateId':'', 'Name':''})
+        session.searchValues = dict(Project={'TypeId':'', 'StateId':'', 'Description':''})
 
     #  Get filters
     projectTypeId = session['searchValues']['Project']['TypeId']
     projectStateId = session['searchValues']['Project']['StateId']
-    searchText = session['searchValues']['Project']['Name']
+    searchText = session['searchValues']['Project']['Description']
     
     if request.vars['btsearch']:
         projectTypeId = request.vars.projectType
@@ -78,7 +83,7 @@ def projects_list():
     if request.vars['btsearch'] or request.vars['btclear']:
         session['searchValues']['Project']['TypeId'] = projectTypeId
         session['searchValues']['Project']['StateId'] = projectStateId
-        session['searchValues']['Project']['Name'] = searchText
+        session['searchValues']['Project']['Description'] = searchText
 
     #Define the query object.
     #query=((db.Project.TypeId==db.Project_Type.id) & (db.Project.StateId == db.Project_State.id))
@@ -86,7 +91,7 @@ def projects_list():
     query = (db.Project)
 
     if searchText and searchText.strip() != '':
-        queries.append(db.Project.Name.contains(searchText))
+        queries.append(db.Project.Description.contains(searchText) | db.Project.Code.contains(searchText))
     if projectTypeId and projectTypeId > 0:
         queries.append(db.Project.TypeId==projectTypeId)
     if projectStateId and projectStateId > 0:
@@ -120,22 +125,31 @@ def projects_list():
 
     searchForms = {'Project':projectSearch}
 
-    formargs={'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target=balnk)}, 'comments' : True}
+    if len(request.args)>1 and request.args[-3]=='edit':
+        formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
+        'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
+    elif len(request.args)>1 and request.args[-3]=='view':
+        formargs={}
 
     #links = [lambda row: A('View Team',_href=URL("project","projects_edit",args=[row.id]))]
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
-        _href=URL("team","team_project_list",args=[row.Project.id]))]
+        _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.Project.id]))]
 
     #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
-    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, 
+    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, details=True, 
         deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
         search_widget=searchForms, formargs = formargs)
 
     title='Project List'
+  
+    if len(request.args)>1:
+        print request.args[-3]
 
     if  len(request.args)>1 and request.args[-2]=='new' and project.create_form:
         title = 'New Project'
-
-    print title
+    elif  len(request.args)>1 and request.args[-3]=='edit':
+        title = 'Edit Project'
+    elif  len(request.args)>1 and request.args[-3]=='view':
+        title = 'Project View'
 
     return dict(projects=project, titles=title)
