@@ -150,6 +150,8 @@ db.define_table('ProjectTeam',
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
 
+db.Project.Description.requires = True
+db.Project.Code.requires = True
 db.Project.TypeId.requires = IS_IN_DB(db, 'Project_Type.id', 'Project_Type.Name')
 db.Project.StateId.requires = IS_IN_DB(db, 'Project_State.id', 'Project_State.Name')
 db.Project.Created_by.readable = False

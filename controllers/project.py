@@ -125,10 +125,16 @@ def projects_list():
 
     searchForms = {'Project':projectSearch}
 
-    if len(request.args)>1 and request.args[-3]=='edit':
-        formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
-        'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
-    elif len(request.args)>1 and request.args[-3]=='view':
+    if len(request.args)>1: 
+        if request.args[-2]=='new':
+            formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
+            'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
+        elif request.args[-3]=='edit':
+            formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
+            'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
+        else:
+            formargs={}
+    else : 
         formargs={}
 
     #links = [lambda row: A('View Team',_href=URL("project","projects_edit",args=[row.id]))]
@@ -142,14 +148,12 @@ def projects_list():
 
     title='Project List'
   
-    if len(request.args)>1:
-        print request.args[-3]
-
-    if  len(request.args)>1 and request.args[-2]=='new' and project.create_form:
-        title = 'New Project'
-    elif  len(request.args)>1 and request.args[-3]=='edit':
-        title = 'Edit Project'
-    elif  len(request.args)>1 and request.args[-3]=='view':
-        title = 'Project View'
+    if len(request.args)>1:       
+        if  request.args[-2]=='new' and project.create_form:
+            title = 'New Project'
+        elif  request.args[-3]=='edit':
+            title = 'Edit Project'
+        elif  request.args[-3]=='view':
+            title = 'Project View'
 
     return dict(projects=project, titles=title)
