@@ -119,11 +119,12 @@ db.define_table(
         Field('code', required=True),
         Field('type_id', 'reference project_type', required=True),
         Field('state_id', 'reference project_state' , required=True),
-        Field('start_date', 'datetime', default=request.now),
-        Field('end_date', 'datetime', default=request.now),
+        Field('start_date', 'date', default=request.now),
+        Field('end_date', 'date', default=request.now),
         Field('created_by', 'reference auth_user', default=user_id),
         Field('created_on', 'datetime', default=request.now),
-        Field('is_active', 'boolean', default=True)
+        Field('is_active', 'boolean', default=True),
+        format="%(description)s"
         )
 
 db.define_table('role', 
@@ -136,15 +137,11 @@ if db(db.role).isempty():
 
 db.define_table('team',
         Field('user_id', db.auth_user, required=True),
-        Field('role_id', db.role, required=True),
-        Field('budget', 'integer',default=''),
-        Field('rate', 'decimal(8,2)',default=''),
-        Field('cost_value', 'decimal(8,2)',default='')
-        )
-
-db.define_table('project_team',
-        Field('team_id', db.team, required=True),
         Field('project_id', db.project, required=True),
+        Field('role_id', db.role, required=True),
+        Field('budget', 'integer',default=0),
+        Field('rate', 'decimal(8,2)',default=0),
+        Field('cost_value', 'decimal(8,2)',default=0),
         )
 
 ## after defining tables, uncomment below to enable auditing
@@ -160,13 +157,11 @@ db.project.created_on.readable = False
 db.project.created_on.writable = False
 db.project.id.readable=False
 db.project.code.searchable=False
-
-
+db.project.code.represent = lambda code,row: code.capitalize()
 
 db.team.role_id.requires = IS_IN_DB(db, 'role.id', 'role.name')
+db.team.project_id.requires = IS_IN_DB(db, 'project.id', 'project.description')
 
-db.project_team.team_id.requires = IS_IN_DB(db, 'team.id', '')
-db.project_team.project_id.requires = IS_IN_DB(db, 'project.id', 'project.description')
 
 mail.settings.server = settings.email_server
 mail.settings.sender = settings.email_sender
