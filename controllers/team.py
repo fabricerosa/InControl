@@ -7,7 +7,7 @@ def team_project_list():
 
     project_row = db(db.project.id==projectId).select(db.project.code)
     if project_row != None:
-        response.title = T("Team - Project '" +project_row[0].Code+"'") 
+        response.title = T("Team - Project '" +project_row[0].code+"'") 
 
     query = (db.project_team.project_id==projectId)
 
@@ -53,7 +53,7 @@ def team_list():
     response.title = T("Team")
 
     query = (db.team)
-    
+
     left = (db.auth_user.on(db.team.user_id==db.auth_user.id), db.role.on(db.team.role_id==db.role.id))
 
     #Define the fields to show on grid.
