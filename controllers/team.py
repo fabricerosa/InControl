@@ -35,12 +35,18 @@ def team_project_list():
     team = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, left=left, details=False,
         create=False, deletable=False, editable=False, maxtextlength=64, paginate=25, searchable=True, user_signature=False)
     
-    if not team:
-        print "sadfsf"
-    	team = 'No team to show'
-    
-    return dict(team=team)
+    newMember = A(SPAN(_class='icon plus icon-plus'),'New Member',_class='w2p_trap button btn',_title='New Member',
+        _href=URL("team","team_project_edit", args=[projectId]))
 
+    return dict(team=team, newMember=newMember)
+    
+@auth.requires_membership('Manager')
+def team_project_edit():
+    fields = (db.ProjectTeam.TeamId)
+    #record = dict(ProjectTeam={'ProjectId':request.args(0), 'TeamId':None})
+
+    form = SQLFORM(db.ProjectTeam)
+    return dict(form=form)
 
 @auth.requires_membership('Manager')
 def team_edit():
