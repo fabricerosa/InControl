@@ -4,28 +4,29 @@ def team_project_list():
     response.title = T("Team")
     #recupera o primeiro argumento, se não redireciona
     projectId = request.args(0)
-    
-    project_row = db(db.Project.id==projectId).select(db.Project.Code)
+
+    project_row = db(db.project.id==projectId).select(db.project.code)
     if project_row != None:
         response.title = T("Team - Project '" +project_row[0].Code+"'") 
 
-    query = (db.ProjectTeam.ProjectId==projectId)
-    left = (db.Team.on(db.ProjectTeam.TeamId==db.Team.id), db.auth_user.on(db.Team.UserId==db.auth_user.id), db.Role.on(db.Team.RoleId==db.Role.id))
+    query = (db.project_team.project_id==projectId)
+
+    left = (db.team.on(db.project_team.team_id==db.team.id), db.auth_user.on(db.team.user_id==db.auth_user.id), db.role.on(db.team.role_id==db.role.id))
 
     #Define the fields to show on grid.
     fields = (db.auth_user.first_name,
-    	db.Role.Name,
-    	db.Team.Budget,
-    	db.Team.Rate,
-    	db.Team.CostValue,
+    	db.role.name,
+    	db.team.budget,
+    	db.team.rate,
+    	db.team.cost_value,
 		)
 
     #Define headers as tuples/dictionaries
     headers = {'auth_user.first_name': 'User',
-           'Role.Name': 'Role',
-           'Team.Budget':'Budget',
-           'Team.Rate':'Rate',
-           'Team.CostValue': 'Cost'
+           'role.name': 'Role',
+           'team.budget':'Budget',
+           'team.rate':'Rate',
+           'team.costValue': 'Cost'
            }
 
     #Let's specify a default sort order on description column in grid
@@ -43,7 +44,7 @@ def team_project_list():
 
 @auth.requires_membership('Manager')
 def team_edit():
-    form = SQLFORM(db.TeamI).process()
+    form = SQLFORM(db.team).process()
     return dict(form=form)
 
 @auth.requires_membership('Manager')
@@ -51,23 +52,24 @@ def team_list():
 
     response.title = T("Team")
 
-    query = (db.Team)
-    left = (db.auth_user.on(db.Team.UserId==db.auth_user.id), db.Role.on(db.Team.RoleId==db.Role.id))
+    query = (db.team)
+    
+    left = (db.auth_user.on(db.team.user_id==db.auth_user.id), db.role.on(db.team.role_id==db.role.id))
 
     #Define the fields to show on grid.
     fields = (db.auth_user.first_name,
-        db.Role.Name,
-        db.Team.Budget,
-        db.Team.Rate,
-        db.Team.CostValue,
+        db.role.name,
+        db.team.budget,
+        db.team.rate,
+        db.team.cost_value,
         )
 
     #Define headers as tuples/dictionaries
     headers = {'auth_user.first_name': 'User',
-           'Role.Name': 'Role',
-           'Team.Budget':'Budget',
-           'Team.Rate':'Rate',
-           'Team.CostValue': 'Cost'
+           'role.name': 'Role',
+           'team.budget':'Budget',
+           'team.rate':'Rate',
+           'team.cost_value': 'Cost'
            }
 
     #Let's specify a default sort order on description column in grid

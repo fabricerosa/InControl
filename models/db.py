@@ -98,75 +98,75 @@ else:
     user_id = None
 
 db.define_table(
-        'Project_Type',
-        Field('Name', required=True),
-        Field('isActive', 'boolean', default=True)
-        )
-if db(db.Project_Type).isempty():
-        db.Project_Type.bulk_insert([{'Name':'T&M'}, {'Name':'Agile'}, {'Name':'Product'}, {'Name':'Internal'}])
+        'project_type',
+        Field('name', required=True),
+        Field('is_active', 'boolean', default=True), 
+        format="%(name)s")
+if db(db.project_type).isempty():
+        db.project_type.bulk_insert([{'name':'T&M'}, {'name':'Agile'}, {'name':'Product'}, {'name':'Internal'}])
 
 db.define_table(
-        'Project_State',
-        Field('Name', required=True),
-        Field('isActive', 'boolean', default=True)
-        )
-if db(db.Project_State).isempty():
-        db.Project_State.bulk_insert([{'Name':'Forecast'}, {'Name':'Active'}, {'Name':'Suspended'}, {'Name':'Canceled'}])
+        'project_state',
+        Field('name', required=True),
+        Field('is_active', 'boolean', default=True),
+        format="%(name)s")
+if db(db.project_state).isempty():
+        db.project_state.bulk_insert([{'name':'Forecast'}, {'name':'Active'}, {'name':'Suspended'}, {'name':'Canceled'}])
 
 db.define_table(
-        'Project',
-        Field('Description', required=True),
-        Field('Code', required=True),
-        Field('TypeId', db.Project_Type, required=True),
-        Field('StateId', db.Project_State , required=True),
-        Field('StartDate', 'datetime', default=request.now),
-        Field('EndDate', 'datetime', default=request.now),
-        Field('Created_by', db.auth_user, default=user_id),
-        Field('Created_on', 'datetime', default=request.now),
-        Field('isActive', 'boolean', default=True)
+        'project',
+        Field('description', required=True),
+        Field('code', required=True),
+        Field('type_id', 'reference project_type', required=True),
+        Field('state_id', 'reference project_state' , required=True),
+        Field('start_date', 'datetime', default=request.now),
+        Field('end_date', 'datetime', default=request.now),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now),
+        Field('is_active', 'boolean', default=True)
         )
 
-db.define_table('Role', 
-        Field('Name', required=True),
-        Field('isActive', 'boolean', default=True)
+db.define_table('role', 
+        Field('name', required=True),
+        Field('is_active', 'boolean', default=True),
+        format="%(name)s"
+        )
+if db(db.role).isempty():
+        db.role.bulk_insert([{'name':'DM'}, {'name':'EM'}, {'name':'DEV'}, {'name':'Senior'}, {'name':'Junior'}, {'name':'Expert'}])
+
+db.define_table('team',
+        Field('user_id', db.auth_user, required=True),
+        Field('role_id', db.role, required=True),
+        Field('budget', 'integer',default=''),
+        Field('rate', 'decimal(8,2)',default=''),
+        Field('cost_value', 'decimal(8,2)',default='')
         )
 
-if db(db.Role).isempty():
-        db.Role.bulk_insert([{'Name':'DM'}, {'Name':'EM'}, {'Name':'DEV'}, {'Name':'Senior'}, {'Name':'Junior'}, {'Name':'Expert'}])
-
-db.define_table('Team',
-        Field('UserId', db.auth_user, required=True),
-        Field('RoleId', db.Role, required=True),
-        Field('Budget', 'integer',default=''),
-        Field('Rate', 'decimal(8,2)',default=''),
-        Field('CostValue', 'decimal(8,2)',default='')
-        )
-
-db.define_table('ProjectTeam',
-        Field('TeamId', db.Team, required=True),
-        Field('ProjectId', db.Project, required=True),
+db.define_table('project_team',
+        Field('team_id', db.team, required=True),
+        Field('project_id', db.project, required=True),
         )
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
 
-db.Project.Description.requires = [IS_NOT_EMPTY(), IS_NOT_IN_DB(db, 'Project.Description')]
-db.Project.Code.requires = IS_NOT_EMPTY()
-db.Project.TypeId.requires = IS_IN_DB(db, 'Project_Type.id', 'Project_Type.Name', error_message='enter a value')
-db.Project.StateId.requires = IS_IN_DB(db, 'Project_State.id', 'Project_State.Name', error_message='enter a value')
-db.Project.Created_by.readable = False
-db.Project.Created_by.writable = False
-db.Project.Created_on.readable = False
-db.Project.Created_on.writable = False
-db.Project.id.readable=False
-db.Project.Code.searchable=False
+db.project.description.requires = [IS_NOT_EMPTY(), IS_NOT_IN_DB(db, 'project.description')]
+db.project.code.requires = IS_NOT_EMPTY()
+db.project.type_id.requires = IS_IN_DB(db, 'project_type.id', 'project_type.name', error_message='enter a value')
+db.project.state_id.requires = IS_IN_DB(db, 'project_state.id', 'project_state.name', error_message='enter a value')
+db.project.created_by.readable = False
+db.project.created_by.writable = False
+db.project.created_on.readable = False
+db.project.created_on.writable = False
+db.project.id.readable=False
+db.project.code.searchable=False
 
 
 
-db.Team.RoleId.requires = IS_IN_DB(db, 'Role.id', 'Role.Name')
+db.team.role_id.requires = IS_IN_DB(db, 'role.id', 'role.name')
 
-db.ProjectTeam.TeamId.requires = IS_IN_DB(db, 'Team.id', '')
-db.ProjectTeam.ProjectId.requires = IS_IN_DB(db, 'Project.id', 'Project.Description')
+db.project_team.team_id.requires = IS_IN_DB(db, 'team.id', '')
+db.project_team.project_id.requires = IS_IN_DB(db, 'project.id', 'project.description')
 
 mail.settings.server = settings.email_server
 mail.settings.sender = settings.email_sender

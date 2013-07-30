@@ -10,15 +10,15 @@ def emptySearchWidget(fields, url):
 def projectSearch(fields, url):
 
     #  Build drop-down list for project type
-    projectTypes = db(db.Project_Type.id > 0).select(orderby=db.Project_Type.Name)
-    optionsType = [OPTION(projectTypes[i].Name, 
+    projectTypes = db(db.project_type.id > 0).select(orderby=db.project_type.name)
+    optionsType = [OPTION(projectTypes[i].name, 
                       _value=str(projectTypes[i].id)) for i in range(len(projectTypes))]
     optionsTypeAdded=optionsType[:]
     optionsTypeAdded.insert(0, OPTION('- All -', _value='0'))
 
     #  Build drop-down list for project state
-    projectStates = db(db.Project_State.id > 0).select(orderby=db.Project_State.Name)
-    optionsState = [OPTION(projectStates[i].Name, 
+    projectStates = db(db.project_state.id > 0).select(orderby=db.project_state.name)
+    optionsState = [OPTION(projectStates[i].name, 
                       _value=str(projectStates[i].id)) for i in range(len(projectStates))]
     optionsStateAdded=optionsState[:]
     optionsStateAdded.insert(0, OPTION('- All -', _value='0'))
@@ -27,13 +27,13 @@ def projectSearch(fields, url):
         LABEL(' '),        
         'Project Type: ', SELECT(_name='projectType', _id="projectType", 
                        _style="width:150px;", 
-                       value=session.searchValues['Project']['TypeId'],
+                       value=session.searchValues['project']['type_id'],
                        *optionsTypeAdded),
         '  Project State: ',SELECT(_name='projectState', _id="projectState", 
                        _style="width:150px;", 
-                       value=session.searchValues['Project']['StateId'],
+                       value=session.searchValues['project']['state_id'],
                        *optionsStateAdded),
-        INPUT(_name='searchText',_value=session.searchValues['Project']['Description'],
+        INPUT(_name='searchText',_value=session.searchValues['project']['description'],
               _style='width:200px;',
               _id='searchText', _placeholder='Type the Project name'),
         INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class=''),
@@ -44,7 +44,7 @@ def projectSearch(fields, url):
     return form
 
 def identification(row):
-    ident= row.Project.id   
+    ident= row.project.id   
     return ident
 
 
@@ -54,12 +54,12 @@ def projects_list():
     constraints = None
 
     if not session.searchValues:
-        session.searchValues = dict(Project={'TypeId':'', 'StateId':'', 'Description':''})
+        session.searchValues = dict(project={'type_id':'', 'state_id':'', 'description':''})
 
     #  Get filters
-    projectTypeId = session['searchValues']['Project']['TypeId']
-    projectStateId = session['searchValues']['Project']['StateId']
-    searchText = session['searchValues']['Project']['Description']
+    projectTypeId = session['searchValues']['project']['type_id']
+    projectStateId = session['searchValues']['project']['state_id']
+    searchText = session['searchValues']['project']['description']
     
     if request.vars['btsearch']:
         projectTypeId = request.vars.projectType
@@ -81,53 +81,53 @@ def projects_list():
         searchText = ''
 
     if request.vars['btsearch'] or request.vars['btclear']:
-        session['searchValues']['Project']['TypeId'] = projectTypeId
-        session['searchValues']['Project']['StateId'] = projectStateId
-        session['searchValues']['Project']['Description'] = searchText
+        session['searchValues']['project']['type_id'] = projectTypeId
+        session['searchValues']['project']['state_id'] = projectStateId
+        session['searchValues']['project']['description'] = searchText
 
     #Define the query object.
     #query=((db.Project.TypeId==db.Project_Type.id) & (db.Project.StateId == db.Project_State.id))
 
-    query = (db.Project)
+    query = (db.project)
 
     if searchText and searchText.strip() != '':
-        queries.append(db.Project.Description.contains(searchText) | db.Project.Code.contains(searchText))
+        queries.append(db.project.description.contains(searchText) | db.project.code.contains(searchText))
     if projectTypeId and projectTypeId > 0:
-        queries.append(db.Project.TypeId==projectTypeId)
+        queries.append(db.project.type_id==projectTypeId)
     if projectStateId and projectStateId > 0:
-        queries.append(db.Project.StateId==projectStateId)
+        queries.append(db.project.state_id==projectStateId)
     if len(queries) > 0:
         query = reduce(lambda a,b:(a&b),queries)
         
-    left = (db.Project_State.on(db.Project.StateId == db.Project_State.id), db.Project_Type.on(db.Project.TypeId == db.Project_Type.id))
+    left = (db.project_state.on(db.project.state_id == db.project_state.id), db.project_type.on(db.project.type_id == db.project_type.id))
 
     #Define the fields to show on grid.
-    fields = (db.Project.Description,
-        db.Project.Code,
-        db.Project_Type.Name,
-        db.Project_State.Name,
-        db.Project.StartDate,
-        db.Project.EndDate,
-        db.Project.Created_by,
-        db.Project.Created_on,
-        db.Project.isActive)
+    fields = (db.project.description,
+        db.project.code,
+        db.project_type.name,
+        db.project_state.name,
+        db.project.start_date,
+        db.project.end_date,
+        db.project.created_by,
+        db.project.created_on,
+        db.project.is_active)
 
     #Define headers as tuples/dictionaries
     headers = {
-           'Project.StartDate': 'Start date',
-           'Project_Type.Name': 'Type',
-           'Project_State.Name': 'State',
-           'Project.EndDate': 'End date',
-           'Project.isActive': 'Active' }
+           'project.start_date': 'Start date',
+           'project_type.name': 'Type',
+           'project_state.name': 'State',
+           'project.end_date': 'End date',
+           'project.is_active': 'Active' }
 
     #Let's specify a default sort order on description column in grid
-    default_sort_order=[db.Project.Description]
+    default_sort_order=[db.project.description]
 
-    searchForms = {'Project':projectSearch}
+    searchForms = {'project':projectSearch}
 
     if len(request.args)>1: 
         if request.args[-2]=='new':
-            formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
+            formargs={'linkto': None, 'col3':{'code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
             'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
         elif request.args[-3]=='edit':
             formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
@@ -139,7 +139,7 @@ def projects_list():
 
     #links = [lambda row: A('View Team',_href=URL("project","projects_edit",args=[row.id]))]
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
-        _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.Project.id]))]
+        _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
 
     #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, details=True, 
