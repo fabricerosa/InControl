@@ -128,12 +128,14 @@ def projects_list():
     if len(request.args)>1: 
         if request.args[-2]=='new':
             formargs={'linkto': None, 'col3':{'code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
-            'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
+            'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",
+            _onClick = "parent.location='%s' " % URL('project', 'projects_list'))], '_style':'border:1px solid #cccccc'}
         elif request.args[-3]=='edit':
             formargs={'linkto': None, 'col3':{'Code':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
-            'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",_onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
+            'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",
+            _onClick = "parent.location='%s' " % URL('project', 'projects_list'))], '_style':'border:1px solid #cccccc'}
         else:
-            formargs={}
+            formargs={'_style':'border:1px solid #cccccc'}
     else : 
         formargs={}
 
@@ -144,7 +146,7 @@ def projects_list():
     #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, details=True, 
         deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, formargs = formargs)
+        search_widget=searchForms, formargs = formargs, onvalidation=validate_end_date)
 
     title='Project List'
   
@@ -157,3 +159,9 @@ def projects_list():
             title = 'Project View'
 
     return dict(projects=project, titles=title)
+
+
+def validate_end_date(form):
+    if form.vars.end_date <= form.vars.start_date:
+        form.errors.end_date = "end date must be later than start date"
+    

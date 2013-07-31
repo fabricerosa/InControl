@@ -91,6 +91,7 @@ use_janrain(auth, filename='private/janrain.key')
 #########################################################################
 
 import datetime
+from datetime import timedelta
 
 if auth.is_logged_in():
     user_id = auth.user.id
@@ -120,7 +121,7 @@ db.define_table(
         Field('type_id', 'reference project_type', required=True),
         Field('state_id', 'reference project_state' , required=True),
         Field('start_date', 'date', default=request.now),
-        Field('end_date', 'date', default=request.now),
+        Field('end_date', 'date', default=request.now + timedelta(days=1)),
         Field('created_by', 'reference auth_user', default=user_id),
         Field('created_on', 'datetime', default=request.now),
         Field('is_active', 'boolean', default=True),
@@ -151,6 +152,7 @@ db.project.description.requires = [IS_NOT_EMPTY(), IS_NOT_IN_DB(db, 'project.des
 db.project.code.requires = IS_NOT_EMPTY()
 db.project.type_id.requires = IS_IN_DB(db, 'project_type.id', 'project_type.name', error_message='enter a value')
 db.project.state_id.requires = IS_IN_DB(db, 'project_state.id', 'project_state.name', error_message='enter a value')
+db.project.start_date.requires = IS_DATE_IN_RANGE(minimum=request.now.date(), maximum=datetime.date(2099,12,31), format="%Y-%m-%d",error_message="start date must be later than today")
 db.project.created_by.readable = False
 db.project.created_by.writable = False
 db.project.created_on.readable = False
