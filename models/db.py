@@ -90,8 +90,11 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+import string
 import datetime
 from datetime import timedelta
+
+import os     
 
 if auth.is_logged_in():
     user_id = auth.user.id
@@ -117,11 +120,11 @@ if db(db.project_state).isempty():
 db.define_table(
         'project',
         Field('description', required=True),
-        Field('code', required=True),
+        Field('code', required=True, comment='Ex: P_...'),
         Field('type_id', 'reference project_type', required=True),
         Field('state_id', 'reference project_state' , required=True),
-        Field('start_date', 'date', default=request.now),
-        Field('end_date', 'date', default=request.now + timedelta(days=1)),
+        Field('start_date', 'date', default=request.now, length=10),
+        Field('end_date', 'date', default=request.now + timedelta(days=1), length=10),
         Field('created_by', 'reference auth_user', default=user_id),
         Field('created_on', 'datetime', default=request.now),
         Field('is_active', 'boolean', default=True),
