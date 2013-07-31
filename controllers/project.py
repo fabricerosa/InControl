@@ -87,8 +87,10 @@ def projects_list():
 
     #Define the query object.
     #query=((db.Project.TypeId==db.Project_Type.id) & (db.Project.StateId == db.Project_State.id))
-
-    query = (db.project)
+    if auth.has_membership('Manager'):
+        query = (db.project) 
+    else:
+        query= ((db.project.id == db.team.project_id) & (db.team.user_id == auth.user_id))
 
     if searchText and searchText.strip() != '':
         queries.append(db.project.description.contains(searchText) | db.project.code.contains(searchText))
@@ -144,8 +146,8 @@ def projects_list():
         _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
 
     #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
-    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, details=True, 
-        deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
+    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
+        deletable=False, editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
         search_widget=searchForms, formargs = formargs, onvalidation=validate_end_date)
 
     title='Project List'

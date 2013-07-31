@@ -46,14 +46,16 @@ def team_project_list():
            'user_id': 'User',
            'project_id': 'Project',
            }
-    record = db.project
-    print record
+
+    import os 
+    os.system('cls')
+
 
     #Let's specify a default sort order on description column in grid
     default_sort_order=[db.auth_user.first_name]
 
     team = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, left=left, details=True,
-        create=True, deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, user_signature=False,
+        create=auth.has_membership('Manager'), deletable=False, editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, user_signature=False,
         args=[projectId], onvalidation=check_user, createargs={'labels':labels})
 
     
