@@ -35,15 +35,26 @@ def team_project_list():
            'role.name': 'Role',
            'team.budget':'Budget',
            'team.rate':'Rate',
-           'team.costValue': 'Cost'
+           'team.costValue': 'Cost',
            }
+
+    #Define labels as tuples/dictionaries
+    labels = {'budget':'Budget',
+           'rate':'Rate',
+           'costValue': 'Cost',
+           'role_id': 'Role',
+           'user_id': 'User',
+           'project_id': 'Project',
+           }
+    record = db.project
+    print record
 
     #Let's specify a default sort order on description column in grid
     default_sort_order=[db.auth_user.first_name]
 
     team = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, left=left, details=True,
         create=True, deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, user_signature=False,
-        args=[projectId], onvalidation=check_user)
+        args=[projectId], onvalidation=check_user, createargs={'labels':labels})
 
     
     # newMember = A(SPAN(_class='icon plus icon-plus'),'New Member',_class='w2p_trap button btn',_title='New Member',
