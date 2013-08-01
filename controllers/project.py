@@ -11,6 +11,8 @@ def projectSearch(fields, url):
             ['start_date', 'end_date'],
             ['is_active',None]]
 
+    print db.project.fields
+
     db.project.type_id.default = session['searchValues']['project']['type_id']
     db.project.state_id.default = session['searchValues']['project']['state_id']
     db.project.description.default = session['searchValues']['project']['description']
