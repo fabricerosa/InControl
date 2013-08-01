@@ -107,7 +107,7 @@ def projects_list():
         deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
         search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
 
-    title='Project List'
+    title=T('Project List')
   
     # Define the page tilte
     if len(request.args)>1:       
