@@ -64,7 +64,7 @@ def team_project_list():
 
     return dict(team=team)
     
-@auth.requires_membership('Manager')
+@auth.requires_membership('Manager') 
 def team_project_edit():
     #record = dict(ProjectTeam={'ProjectId':request.args(0), 'TeamId':None})
     form = SQLFORM(db.team)
