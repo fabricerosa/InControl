@@ -180,7 +180,7 @@ def projects_list():
 >>>>>>> origin/fgodinho
 >>>>>>> master
 
-    title='Project List'
+    title=T('Project List')
   
     # Define the page tilte
     if len(request.args)>1:       
