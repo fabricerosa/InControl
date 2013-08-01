@@ -98,6 +98,7 @@
 'Edit current record': 'Edição de registo currente',
 'edit post': 'edit post',
 'edit profile': 'Editar perfil',
+'Edit Project': 'Edit Project',
 'Edit This App': 'Edite esta aplicação',
 'Email': 'Email',
 'Email and SMS': 'Email and SMS',

@@ -1,11 +1,15 @@
 #@auth.requires_signature()
-#@auth.requires_login()
-@auth.requires_membership('Manager')
+@auth.requires_login()
 
 def projectSearch(fields, url):
 
     buttons = [INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class=''),
         INPUT(_type='submit',_value=T('Clear'), _name='btclear', _class='')]
+
+    fields =[['description', 'code'],
+            ['type_id', 'state_id'],
+            ['start_date', 'end_date'],
+            ['is_active',None]]
 
     db.project.type_id.default = session['searchValues']['project']['type_id']
     db.project.state_id.default = session['searchValues']['project']['state_id']
@@ -15,115 +19,54 @@ def projectSearch(fields, url):
     db.project.end_date.default = session['searchValues']['project']['end_date']
     db.project.is_active.default = session['searchValues']['project']['is_active']
 
-    '''db.project.start_date.default = None
-    db.project.end_date.default = None'''
-
-
-    form = SQLFORM(db.project, buttons=buttons, comments=False, _id='projectSearch', _action=url, _method='post', _style='background-color: #FAFAFA; padding: 10px; margin-top: 10px;')
+    form = DIV(SOLIDFORM(db.project, fields=fields, buttons=buttons, comments=False, _id='projectSearch', _action=url, _method='post'), _class='divfilters')
 
     return form
-
-'''
-    #  Build drop-down list for project type
-    projectTypes = db(db.project_type.id > 0).select(orderby=db.project_type.name)
-    optionsType = [OPTION(projectTypes[i].name, 
-                      _value=str(projectTypes[i].id)) for i in range(len(projectTypes))]
-    optionsTypeAdded=optionsType[:]
-    optionsTypeAdded.insert(0, OPTION('- All -', _value='0'))
-
-    #  Build drop-down list for project state
-    projectStates = db(db.project_state.id > 0).select(orderby=db.project_state.name)
-    optionsState = [OPTION(projectStates[i].name, 
-                      _value=str(projectStates[i].id)) for i in range(len(projectStates))]
-    optionsStateAdded=optionsState[:]
-    optionsStateAdded.insert(0, OPTION('- All -', _value='0'))
-
-    form = FORM(DIV(
-        LABEL(' '),        
-        'Project Type: ', SELECT(_name='projectType', _id="projectType", 
-                       _style="width:150px;", 
-                       value=session.searchValues['project']['type_id'],
-                       *optionsTypeAdded),
-        '  Project State: ',SELECT(_name='projectState', _id="projectState", 
-                       _style="width:150px;", 
-                       value=session.searchValues['project']['state_id'],
-                       *optionsStateAdded),
-        INPUT(_name='searchText',_value=session.searchValues['project']['description'],
-              _style='width:200px;',
-              _id='searchText', _placeholder='Type the Project name'),
-        INPUT(_type='submit',_value=T('Search'), _name='btsearch', _class=''),
-        INPUT(_type='submit',_value=T('Clear'), _name='btclear', _class=''), _id="filters", _class='divfilters'),
-        _id='projectSearch',
-        _action=url, _method='post')'''
-    
-   
-
 
 def projects_list():
 
     queries = []
-    constraints = None
-
+    
     if not session.searchValues:
         session.searchValues = dict(project={'description':'', 'code':'', 'type_id':None, 'state_id':None, 'start_date':None, 'end_date':None, 'is_active': True})
 
-    #  Get filters
-    projectTypeId = session['searchValues']['project']['type_id']
-    projectStateId = session['searchValues']['project']['state_id']
-    description = session['searchValues']['project']['description']
-    code = session['searchValues']['project']['code']
-    start_date = session['searchValues']['project']['start_date']
-    end_date = session['searchValues']['project']['end_date']
-    is_active = session['searchValues']['project']['is_active']
-    
     if request.vars['btsearch']:
-        description = request.vars.description
-        code = request.vars.code        
-        start_date = (request.vars.start_date)
-        end_date = (request.vars.end_date)
-        is_active = request.vars.is_active
+        
+      for i in range(len(request.vars)):            
+            if request.vars.items()[i][0] in session['searchValues']['project']:
+                if str(request.vars.items()[i][0]).find('_date')!= -1:                   
+                    session['searchValues']['project'][request.vars.items()[i][0]] =  str_to_dt(request.vars.items()[i][1])
+                else:
+                     session['searchValues']['project'][request.vars.items()[i][0]] =  request.vars.items()[i][1]          
 
-        try:
-            projectTypeId = int(request.vars.type_id)
-        except:
-            projectTypeId = None
+    elif request.vars['btclear']:      
+        for i in range(len(request.vars)):            
+            if request.vars.items()[i][0] in session['searchValues']['project']:
+                if str(request.vars.items()[i][0]).find('_date')!= -1 or str(request.vars.items()[i][0]).find('_id')!= -1:
+                    session['searchValues']['project'][request.vars.items()[i][0]] =  None
+                else:
+                     session['searchValues']['project'][request.vars.items()[i][0]] =  ''              
 
-        try:
-            projectStateId = int(request.vars.state_id)
-        except:
-            projectStateId = None
-
-
-
-    elif request.vars['btclear']:
-        projectTypeId = None
-        projectStateId = None
-        description = ''
-        code = ''
-        start_date = None
-        end_date = None
-        is_active = True
+    if auth.has_membership('Manager'):
+        query = (db.project) 
+    else:
+        query= ((db.project.id == db.team.project_id) & (db.team.user_id == auth.user_id))
 
 
-    if request.vars['btsearch'] or request.vars['btclear']:
-        session['searchValues']['project']['type_id'] = projectTypeId
-        session['searchValues']['project']['state_id'] = projectStateId
-        session['searchValues']['project']['description'] = description
-        session['searchValues']['project']['code'] = code        
-        session['searchValues']['project']['start_date'] = str_to_dt(start_date)
-        session['searchValues']['project']['end_date'] = str_to_dt(end_date)
-        session['searchValues']['project']['is_active'] = is_active
-
-    query = (db.project)
-
-    if description and description.strip() != '':
-        queries.append(db.project.description.contains(description))
-    if code and code.strip() != '':
-        queries.append(db.project.code.contains(code))
-    if projectTypeId and projectTypeId > 0:
-        queries.append(db.project.type_id==projectTypeId)
-    if projectStateId and projectStateId > 0:
-        queries.append(db.project.state_id==projectStateId)
+    if session['searchValues']['project']['description'] and str(session['searchValues']['project']['description']).strip() != '':
+        queries.append(db.project.description.contains(session['searchValues']['project']['description']))
+    if session['searchValues']['project']['code'] and str(session['searchValues']['project']['code']).strip() != '':
+        queries.append(db.project.code.contains(session['searchValues']['project']['code']))
+    if session['searchValues']['project']['type_id'] and session['searchValues']['project']['type_id'] > 0:
+        queries.append(db.project.type_id==session['searchValues']['project']['type_id'])
+    if session['searchValues']['project']['state_id'] and session['searchValues']['project']['state_id'] > 0:
+        queries.append(db.project.state_id==session['searchValues']['project']['state_id'])
+    if session['searchValues']['project']['start_date'] and session['searchValues']['project']['start_date'] != None:
+        queries.append(db.project.start_date==session['searchValues']['project']['start_date'])
+    if session['searchValues']['project']['end_date'] and session['searchValues']['project']['end_date'] != None:
+        queries.append(db.project.end_date==session['searchValues']['project']['end_date'])
+    if session['searchValues']['project']['is_active']:
+        queries.append(db.project.is_active==session['searchValues']['project']['is_active'])
     if len(queries) > 0:
         query = reduce(lambda a,b:(a&b),queries)
         
@@ -152,19 +95,17 @@ def projects_list():
     default_sort_order=[db.project.description]
 
     searchForms = {'project':projectSearch}
-
+   
     edit_new_args = {'linkto': None, 'col3':{'type_id':A('what is this?', _href='http://www.google.com/search?q=define:name', _target='blank')}, 'comments' : True, 
             'buttons': [ TAG.button('Submit', _type="submit", _class='btn-primary'), ' ', TAG.button('Cancel',_type="button",
-            _onClick = "parent.location='%s' " % URL('project', 'projects_list'))], '_style':'border:1px solid #cccccc'}
-        
-    viewargs = {'_style':'border:1px solid #cccccc'}
-   
+            _onClick = "parent.location='%s' " % URL('project', 'projects_list'))]}
+         
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
         _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
 
-    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, details=True, 
-        deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, viewargs=viewargs, onvalidation=validate_end_date)
+    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
+        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
+        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
 
     title='Project List'
   
@@ -184,12 +125,5 @@ def validate_end_date(form):
     if form.vars.end_date <= form.vars.start_date:
         form.errors.end_date = T("end date must be later than start date")
 
-def str_to_dt(dte):
-    dte = str(dte)
-    dte = string.strip(dte)
-    if len(dte) == 10:
-        y = int(dte[0:4])
-        m = int(dte[5:7])
-        d = int(dte[9:])
-        return datetime.date(y, m, d) 
+
     
