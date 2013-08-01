@@ -93,6 +93,10 @@ use_janrain(auth, filename='private/janrain.key')
 import string
 import datetime
 from datetime import timedelta
+from plugin_solidform import SOLIDFORM
+from plugin_tablecheckbox import TableCheckbox
+from plugin_solidtable import SOLIDTABLE
+from gluon.contrib.populate import populate
 
 import os     
 
