@@ -125,8 +125,14 @@ db.define_table(
         'project',
         Field('description', required=True),
         Field('code', required=True, comment='Ex: P_...'),
+        Field('odd'),
         Field('type_id', 'reference project_type', required=True),
-        Field('state_id', 'reference project_state' , required=True),
+        Field('state_id', 'reference project_state', required=True),
+        Field('total', 'decimal(8,2)', default=0),
+        Field('billing_amount', 'decimal(8,2)', default=0),
+        Field('recognize_amount', 'decimal(8,2)', default=0),
+        Field('anticipated_costs', 'decimal(8,2)', default=0),
+        Field('real_costs', 'decimal(8,2)', default=0),
         Field('start_date', 'date', default=request.now, length=10),
         Field('end_date', 'date', default=request.now + timedelta(days=1), length=10),
         Field('created_by', 'reference auth_user', default=user_id),
@@ -141,7 +147,7 @@ db.define_table('role',
         format="%(name)s"
         )
 if db(db.role).isempty():
-        db.role.bulk_insert([{'name':'DM'}, {'name':'EM'}, {'name':'DEV'}, {'name':'Senior'}, {'name':'Junior'}, {'name':'Expert'}])
+        db.role.bulk_insert([{'name':'DM'}, {'name':'EM'}, {'name':'DEV'}, {'name':'Senior'}, {'name':'Junior'}, {'name':'Expert'}, {'name':'License'}, {'name':'Costs'}])
 
 db.define_table('team',
         Field('user_id', db.auth_user, required=True),

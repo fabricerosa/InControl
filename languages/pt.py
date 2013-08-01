@@ -182,6 +182,7 @@
 'not in': 'not in',
 'não pode ser vazio': 'não pode ser vazio',
 'Object or table name': 'Object or table name',
+'Odd': 'Odd',
 'Old password': 'Old password',
 'Online examples': 'Exemplos online',
 'Or': 'Or',
