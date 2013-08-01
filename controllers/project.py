@@ -11,6 +11,8 @@ def projectSearch(fields, url):
             ['start_date', 'end_date'],
             ['is_active',None]]
 
+    print db.project.fields
+
     db.project.type_id.default = session['searchValues']['project']['type_id']
     db.project.state_id.default = session['searchValues']['project']['state_id']
     db.project.description.default = session['searchValues']['project']['description']
@@ -31,7 +33,8 @@ def projects_list():
     if not session.searchValues:
         session.searchValues = dict(project={'description':'', 'code':'', 'type_id':None, 'state_id':None, 'start_date':None, 'end_date':None, 'is_active': True})
 
-    if request.vars['btsearch']:        
+
+    if request.vars['btsearch']:
       for i in range(len(request.vars)):            
             if request.vars.items()[i][0] in session['searchValues']['project']:
                 if str(request.vars.items()[i][0]).find('_date')!= -1:                   
@@ -52,7 +55,6 @@ def projects_list():
     else:
         query= ((db.project.id == db.team.project_id) & (db.team.user_id == auth.user_id))
 
-
     if session['searchValues']['project']['description'] and str(session['searchValues']['project']['description']).strip() != '':
         queries.append(db.project.description.contains(session['searchValues']['project']['description']))
     if session['searchValues']['project']['code'] and str(session['searchValues']['project']['code']).strip() != '':
@@ -67,8 +69,6 @@ def projects_list():
         queries.append(db.project.end_date==session['searchValues']['project']['end_date'])
     if session['searchValues']['project']['is_active']:
         queries.append(db.project.is_active==session['searchValues']['project']['is_active'])
-
-
     if len(queries) > 0:
         query = reduce(lambda a,b:(a&b),queries)
         
@@ -104,6 +104,7 @@ def projects_list():
          
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
         _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
+
 
 
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
