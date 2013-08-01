@@ -23,10 +23,7 @@ def projectSearch(fields, url):
 
     return form
 
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/fgodinho
 def projects_list():
 
     queries = []
@@ -34,13 +31,7 @@ def projects_list():
     if not session.searchValues:
         session.searchValues = dict(project={'description':'', 'code':'', 'type_id':None, 'state_id':None, 'start_date':None, 'end_date':None, 'is_active': True})
 
-<<<<<<< HEAD
-    if request.vars['btsearch']:
-<<<<<<< HEAD
-        
-=======
     if request.vars['btsearch']:        
->>>>>>> origin/fgodinho
       for i in range(len(request.vars)):            
             if request.vars.items()[i][0] in session['searchValues']['project']:
                 if str(request.vars.items()[i][0]).find('_date')!= -1:                   
@@ -56,55 +47,10 @@ def projects_list():
                 else:
                      session['searchValues']['project'][request.vars.items()[i][0]] =  ''              
 
-<<<<<<< HEAD
-=======
-        description = request.vars.description
-        code = request.vars.code        
-        start_date = (request.vars.start_date)
-        end_date = (request.vars.end_date)
-        is_active = request.vars.is_active
-
-        try:
-            projectTypeId = int(request.vars.type_id)
-        except:
-            projectTypeId = None
-
-        try:
-            projectStateId = int(request.vars.state_id)
-        except:
-            projectStateId = None
-
-
-
-    elif request.vars['btclear']:
-        projectTypeId = None
-        projectStateId = None
-        description = ''
-        code = ''
-        start_date = None
-        end_date = None
-        is_active = True
-
-
-    if request.vars['btsearch'] or request.vars['btclear']:
-        session['searchValues']['project']['type_id'] = projectTypeId
-        session['searchValues']['project']['state_id'] = projectStateId
-<<<<<<< HEAD
-        session['searchValues']['project']['description'] = searchText
-
-    #Define the query object.
-    #query=((db.Project.TypeId==db.Project_Type.id) & (db.Project.StateId == db.Project_State.id))
->>>>>>> master
-=======
->>>>>>> origin/fgodinho
     if auth.has_membership('Manager'):
         query = (db.project) 
     else:
         query= ((db.project.id == db.team.project_id) & (db.team.user_id == auth.user_id))
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/fgodinho
 
 
     if session['searchValues']['project']['description'] and str(session['searchValues']['project']['description']).strip() != '':
@@ -121,31 +67,8 @@ def projects_list():
         queries.append(db.project.end_date==session['searchValues']['project']['end_date'])
     if session['searchValues']['project']['is_active']:
         queries.append(db.project.is_active==session['searchValues']['project']['is_active'])
-<<<<<<< HEAD
-=======
-=======
-        session['searchValues']['project']['description'] = description
-        session['searchValues']['project']['code'] = code        
-        session['searchValues']['project']['start_date'] = str_to_dt(start_date)
-        session['searchValues']['project']['end_date'] = str_to_dt(end_date)
-        session['searchValues']['project']['is_active'] = is_active
-
-    query = (db.project)
->>>>>>> origin/fgodinho
-
-    if description and description.strip() != '':
-        queries.append(db.project.description.contains(description))
-    if code and code.strip() != '':
-        queries.append(db.project.code.contains(code))
-    if projectTypeId and projectTypeId > 0:
-        queries.append(db.project.type_id==projectTypeId)
-    if projectStateId and projectStateId > 0:
-        queries.append(db.project.state_id==projectStateId)
->>>>>>> master
-=======
 
 
->>>>>>> origin/fgodinho
     if len(queries) > 0:
         query = reduce(lambda a,b:(a&b),queries)
         
@@ -182,29 +105,10 @@ def projects_list():
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
         _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
-        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
-=======
-<<<<<<< HEAD
-    #project = SQLTABLE(db().select(db.Project.ALL),headers='fieldname:capitalize')
-    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
-        deletable=False, editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, formargs = formargs, onvalidation=validate_end_date)
-=======
-    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=True, details=True, 
-        deletable=False, editable=True, maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, viewargs=viewargs, onvalidation=validate_end_date)
->>>>>>> origin/fgodinho
->>>>>>> master
-=======
 
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
         deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
         search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
->>>>>>> origin/fgodinho
 
     title=T('Project List')
   
