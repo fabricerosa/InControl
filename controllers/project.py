@@ -23,6 +23,10 @@ def projectSearch(fields, url):
 
     return form
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/fgodinho
 def projects_list():
 
     queries = []
@@ -30,9 +34,13 @@ def projects_list():
     if not session.searchValues:
         session.searchValues = dict(project={'description':'', 'code':'', 'type_id':None, 'state_id':None, 'start_date':None, 'end_date':None, 'is_active': True})
 
+<<<<<<< HEAD
     if request.vars['btsearch']:
 <<<<<<< HEAD
         
+=======
+    if request.vars['btsearch']:        
+>>>>>>> origin/fgodinho
       for i in range(len(request.vars)):            
             if request.vars.items()[i][0] in session['searchValues']['project']:
                 if str(request.vars.items()[i][0]).find('_date')!= -1:                   
@@ -48,6 +56,7 @@ def projects_list():
                 else:
                      session['searchValues']['project'][request.vars.items()[i][0]] =  ''              
 
+<<<<<<< HEAD
 =======
         description = request.vars.description
         code = request.vars.code        
@@ -86,11 +95,16 @@ def projects_list():
     #Define the query object.
     #query=((db.Project.TypeId==db.Project_Type.id) & (db.Project.StateId == db.Project_State.id))
 >>>>>>> master
+=======
+>>>>>>> origin/fgodinho
     if auth.has_membership('Manager'):
         query = (db.project) 
     else:
         query= ((db.project.id == db.team.project_id) & (db.team.user_id == auth.user_id))
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/fgodinho
 
 
     if session['searchValues']['project']['description'] and str(session['searchValues']['project']['description']).strip() != '':
@@ -107,6 +121,7 @@ def projects_list():
         queries.append(db.project.end_date==session['searchValues']['project']['end_date'])
     if session['searchValues']['project']['is_active']:
         queries.append(db.project.is_active==session['searchValues']['project']['is_active'])
+<<<<<<< HEAD
 =======
 =======
         session['searchValues']['project']['description'] = description
@@ -127,6 +142,10 @@ def projects_list():
     if projectStateId and projectStateId > 0:
         queries.append(db.project.state_id==projectStateId)
 >>>>>>> master
+=======
+
+
+>>>>>>> origin/fgodinho
     if len(queries) > 0:
         query = reduce(lambda a,b:(a&b),queries)
         
@@ -164,6 +183,7 @@ def projects_list():
         _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
         deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
         search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
@@ -179,6 +199,12 @@ def projects_list():
         search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, viewargs=viewargs, onvalidation=validate_end_date)
 >>>>>>> origin/fgodinho
 >>>>>>> master
+=======
+
+    project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
+        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
+        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
+>>>>>>> origin/fgodinho
 
     title=T('Project List')
   
