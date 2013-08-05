@@ -81,6 +81,8 @@
 'db': 'bd',
 'DB Model': 'Modelo de BD',
 'Delete': 'Delete',
+'Delete selected projects': 'Delete selected projects',
+'Delete selected rows': 'Delete selected rows',
 'Delete:': 'Eliminar:',
 'Demo': 'Demo',
 'Deployment Recipes': 'Deployment Recipes',

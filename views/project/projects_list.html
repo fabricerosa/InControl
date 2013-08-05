@@ -3,6 +3,13 @@
 <h2>{{=titles}}</h2>
 {{end}}
 
+<script type="text/javascript">
+function toggleAll(source,name) {
+          checkboxes = document.getElementsByName(name);
+          for(var i in checkboxes)
+            checkboxes[i].checked = source.checked;
+}
+</script>
 
 {{=projects}}
 
