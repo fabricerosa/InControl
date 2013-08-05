@@ -22,6 +22,7 @@ else:
     ## from google.appengine.api.memcache import Client
     ## session.connect(request, response, db = MEMDB(Client()))
 
+
 ## by default give a view/generic.extension to all actions from localhost
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
@@ -139,7 +140,6 @@ db.define_table(
         format="%(description)s"
         )
 
-<<<<<<< HEAD
 db.define_table(
         'address',
         Field('street_name', required=True),
@@ -158,8 +158,6 @@ db.define_table(
         Field('created_on', 'datetime', default=request.now),        
         )
 
-=======
->>>>>>> origin/filipegodinho
 ENTITY_TYPE = {"client": T("Client"), "provider": T("Provider"), "partner": T("Partner"), "mix": T("Mix")}
 
 db.define_table(
@@ -167,7 +165,6 @@ db.define_table(
         Field('name', required=True),
         Field('short_name'),
         Field('nif', required=True),
-<<<<<<< HEAD
         Field('country_id', 'reference country'),
         Field("entity_type", requires=IS_IN_SET(ENTITY_TYPE), default="client", writable=False),
         Field('address_id', 'reference address'),
@@ -175,11 +172,6 @@ db.define_table(
         Field('is_active', 'boolean', default=True),
         Field('created_by', 'reference auth_user', default=user_id),
         Field('created_on', 'datetime', default=request.now),        
-=======
-        Field('country'),
-        Field("entity_type", requires=IS_IN_SET(ENTITY_TYPE), default="client", writable=False),
-        Field('is_active', 'boolean', default=True),
->>>>>>> origin/filipegodinho
         format="%(name)s")
 
 db.define_table(
@@ -194,7 +186,6 @@ db.define_table(
         'acknowledgment',
         Field('type_id', 'reference acknowledgment_type', required=True),
         Field('entity_id', 'reference entity', required=True),
-<<<<<<< HEAD
         Field('cost_value', 'decimal(8,2)', default=user_id),
         Field('created_by', 'reference auth_user', default=user_id),
         Field('created_on', 'datetime', default=request.now),
@@ -225,11 +216,6 @@ db.define_table(
         Field('created_on', 'datetime', default=request.now)
         )
 
-=======
-        )
-
-
->>>>>>> origin/filipegodinho
 db.define_table('role', 
         Field('name', required=True),
         Field('is_active', 'boolean', default=True),

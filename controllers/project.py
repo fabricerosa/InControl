@@ -107,16 +107,12 @@ def projects_list():
     
 
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
-<<<<<<< HEAD
-        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date, selectable=True)
-=======
-        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, selectable = selectable, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date, selectable_submit_button='Delete selected projects')
+
+    deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, selectable = selectable, searchable=True, links=links, user_signature=False, left=left, 
+    search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date, selectable_submit_button='Delete selected projects')
     
     #pdb.set_trace()          
     #pdb.stop_trace()
->>>>>>> origin/filipegodinho
 
     title=T('Project List')
   

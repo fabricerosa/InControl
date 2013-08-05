@@ -9,5 +9,5 @@ response.meta.description = settings.description
 response.menu = [
 (T('Dashboard'),URL('default','dashboard')==URL(),URL('default','dashboard'),[]),
 (T('Projects'),URL('project','projects_list')==URL(),URL('project','projects_list'),[]),
-(T('Team'),URL('team','team_list')==URL(),URL('team','team_list'),[]),
+(T('Entities'),URL('entity','entity_list')==URL(),URL('entity','entity_list'),[]),
 ]

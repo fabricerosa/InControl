@@ -81,9 +81,6 @@ def team_edit():
 
 @auth.requires_membership('Manager')
 def team_list():
-    import pycountry
-    len(pycountry.countries)
-    response.title = T("Team")
 
     query = (db.team)
 
