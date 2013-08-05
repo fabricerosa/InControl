@@ -1,0 +1,431 @@
+/*===================================================================
+ CSS file for web2py database diagram
+ this file can be used as a reference in order to create customized
+ representations. For this reason it is not optimized and not minified
+ The necessary css rules are embedded in db_diagram.html file
+ 
+ last modified 30 Jan 2013 by Paolo Caruccio
+====================================================================*/
+
+/* general */
+
+body
+{
+margin: 0;
+padding: 0;
+font-family: 'Jura', Arial, sans-serif;
+font-size: 16px;
+color: #444444;
+background: #fffafa;
+}
+
+a
+{
+text-decoration: none;
+color: #777777;
+}
+a:hover
+{
+text-decoration: underline;
+color: #000000;
+}
+
+/* end of general */
+/*--------------------------*/
+/* alert message */
+
+#dbia-alert
+{
+text-align: center;
+margin-top: 10%;
+}
+
+#dbia-alert div
+{
+display: inline-block;
+padding: 0 12px 0 12px;
+}
+.ie7 #dbia-alert div
+{
+display: inline;
+zoom: 1;
+}
+
+#dbia-alert p
+{
+font-size: 14px;
+}
+.ie9 #dbia-alert p
+{
+line-height: 1;
+}
+.ie7 #dbia-alert p
+{
+margin: 10px 0;
+}
+
+#dbia-alert span
+{
+float: left;
+margin-right: 4px;
+}
+
+#dbia-alert b
+{
+font-weight: 600;
+}
+
+/* end of alert message */
+/*--------------------------*/
+/* diagram title */
+
+.dbdia-title-box
+{
+background-color: #ffffff;
+display: inline-block;
+border: 1px solid #000000;
+border-top: 0;
+border-left: 0;
+}
+.ie7 .dbdia-title-box
+{
+display: inline;
+zoom: 1;
+}
+
+h1.dbdia-title
+{
+border: 1px solid #000000;
+border-left: 0;
+border-right: 0;
+padding: 0 22px 0 0;
+margin: 22px 0 0 0;
+font-size: 32px;
+}
+
+.dbdia-title small
+{
+font-size: 13px;
+margin: 0 0 0 3px;
+display: block;
+}
+
+.dbdia-title b
+{
+display: block;
+margin: 0 0 0 16px;
+padding: 10px 0 11px 0;
+text-transform: uppercase;
+}
+.ie .dbdia-title b
+{
+padding-top: 11px;
+}
+
+.dbdia-credit 
+{
+display: block;
+text-align: center;
+margin: 0;
+padding: 0;
+line-height: 22px;
+height: 22px;
+color: #777777;
+}
+.ie7 .dbdia-credit
+{
+height: auto;
+}
+
+/* end of diagram title */
+/*--------------------------*/
+/* diagram menu */
+
+#dbdia-menu-wrapper
+{
+display: inline-block;
+vertical-align: top;
+margin: 0;
+padding: 0;
+border-right: 1px solid #000000;
+}
+.ie7 #dbdia-menu-wrapper
+{
+display: inline;
+zoom: 1;
+}
+
+.dbdia-menu
+{
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+
+.dbdia-menu li
+{
+margin: 0;
+padding: 0 38px 0 38px;
+line-height: 22px;
+background: #ffffff;
+border-bottom: 1px solid #000000;
+}
+
+/* end of diagram menu */
+/*--------------------------*/
+/* diagram */
+
+#dbdia-container{font-size: 13px;}
+
+.dbdia-canvas{margin: 8px;}
+
+.dbdia-node
+{
+padding: 2px 4px 3px 4px;
+text-align: center;
+cursor: pointer;
+color: #000000;
+border: 1px solid rgba(105,105,105,0.5);
+background: #ffffff url("pencildiagonals.png") 0 0 repeat scroll;
+box-shadow: 0px 0px 3px rgba(0,0,0,0.4);
+}
+.ie8 .dbdia-node,
+.ie7 .dbdia-node
+{
+zoom: 1;
+border: 1px solid #c0c0c0;
+}
+
+.strong-entity
+{
+font-weight: 600;
+border: 1px solid rgba(0,0,0,0.8);
+}
+.ie8 .strong-entity,
+.ie7 .strong-entity
+{
+border: 1px solid #000000;
+}
+
+.red,div[class*="chain1"]{background-color:#ff0000;background-color:rgba(255,0,0,0.75);}
+.blue,div[class*="chain2"]{background-color:#0000ff;background-color:rgba(0,0,255,0.75);}
+.green,div[class*="chain3"]{background-color:#008000;background-color:rgba(0,128,0,0.75);}
+.yellow,div[class*="chain4"]{background-color:#ffff00;background-color:rgba(255,255,0,0.75);}
+.aqua,div[class*="chain5"]{background-color:#00ffff;background-color:rgba(0,255,255,0.75);}
+.fuchsia,div[class*="chain6"]{background-color:#ff00ff;background-color:rgba(255,0,255,0.75);}
+.lime,div[class*="chain7"]{background-color:#00ff00;background-color:rgba(0,255,0,0.75);}
+.orange,div[class*="chain8"]{background-color:#ffa500;background-color:rgba(255,165,0,0.75);}
+.dodgerblue,div[class*="chain9"]{background-color:#1e90ff;background-color:rgba(30,144,255,0.75);}
+.maroon,div[class*="chain10"]{background-color:#800000;background-color:rgba(128,0,0,0.75);}
+.pink,div[class*="chain11"]{background-color:#ffc0cb;background-color:rgba(255,192,203,0.75);}
+.purple,div[class*="chain12"]{background-color:#800080;background-color:rgba(128,0,128,0.75);}
+
+/* end of diagram */
+/*---------------------------------------------------------------------------*/
+/* jqueryui dialog */
+/* below rules override jqueryUI popup default */
+
+.ui-widget
+{
+font-family: inherit;
+font-size: 14px;
+}
+
+.ui-dialog .ui-dialog-titlebar 
+{
+padding: 0;
+margin: 0;
+font-size: 16px;
+}
+
+.ui-corner-all
+{
+border-radius: 0;
+}
+
+.ui-widget-header 
+{
+border: none;
+background: none;
+color: #000000;
+text-shadow: -1px 0 #c0c0c0, 0 1px #c0c0c0, 1px 0 #c0c0c0, 0 -1px #c0c0c0;
+}
+
+.triangle
+{
+display: inline-block;
+width: 0px;
+height: 0px;
+border-style: solid;
+border-width: 16px 16px 0 0;
+border-color: #007bff transparent transparent transparent;
+margin-right: 5px;
+-webkit-transform: rotate(360deg);
+}
+
+.ui-dialog .ui-dialog-buttonpane
+{
+border: none;
+margin: 0;
+padding: 0;
+}
+
+.ui-button-text-only .ui-button-text
+{
+padding: 0;
+}
+
+.ui-widget-content
+{
+background: #ffffff;
+}
+
+.ui-widget button
+{
+font-family: inherit;
+}
+
+.ui-widget .ui-widget {
+font-size: 13px;
+}
+
+.ui-dialog .ui-dialog-buttonpane button
+{
+margin: 0 8px 0 0;
+padding: 0;
+border: 0;
+outline: 0;
+}
+
+.ui-widget-content .ui-state-default
+{
+background: none;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset
+{
+float: left;
+}
+
+button.ui-state-focus .ui-button-text,
+button.ui-state-hover .ui-button-text
+{
+text-decoration: underline;
+}
+
+.ui-dialog .ui-dialog-content {
+position: relative;
+border: 0;
+padding: 0;
+background: none;
+overflow: auto;
+zoom: 1;
+}
+
+/* end of jqueryui popup dialog */
+/*---------------------------------------------------------------------------*/
+/* tablefields */
+
+ul.table-fields,
+ul.table-fields li
+{
+list-style: none;
+border: none;
+margin: 0;
+padding: 0;
+}
+
+ul.table-fields li
+{
+border-top: 1px solid #dddddd;
+border-bottom: 1px solid #dddddd;
+cursor: default;
+margin: 0 0 -1px 0;
+padding: 0 20px 0 0;
+background: #ffffff;
+vertical-align: middle;
+}
+
+ul.table-fields small
+{
+color: #c0c0c0;
+text-transform: uppercase;
+}
+
+.table-fields i
+{
+display: inline-block;
+width: 13px;
+height: 13px;
+border-radius: 13px;
+font-size: 12px;
+margin-right: 4px;
+padding: 1px;
+vertical-align: middle;
+background-color: transparent;
+border: 1px solid transparent;
+}
+
+.table-fields i.primary
+{
+background-color: #ffd700;
+border-color: #dddddd;
+}
+
+.table-fields i.foreign
+{
+background-color: #c0c0c0;
+border-color: #dddddd;
+}
+
+.table-fields i.hidden-reference
+{
+background-color: #ffffff;
+border-color: #dddddd;
+}
+
+.table-fields a.nw,
+.table-fields a.nr,
+.table-fields a.nwnr
+{
+display: block;
+background-color: #ffffff;
+border: 1px solid #dddddd;
+float: right;
+width: 8px;
+height: 8px;
+margin-top: 4px;
+}
+
+.table-fields a.nwnr
+{
+background-color: #faebd7;
+}
+
+.table-fields a.nw
+{
+background-color: #f0f8ff;
+}
+
+.table-fields a.nr
+{
+background-color: #fafad2;
+}
+
+.table-fields .table_info_title
+{
+text-align: center;
+font-weight: 600;
+border-left: 1px solid #dddddd;
+border-right: 1px solid #dddddd;
+background-color: #dddddd;
+}
+
+a.info_key
+{
+color: #c0c0c0;
+font-weight: 600;
+}
+
+/* end of tablefields */
+/*---------------------------------------------------------------------------*/

@@ -1,0 +1,11 @@
+/*===================================================================
+ CSS file for web2py database diagram - printable version
+ this file can be used as a reference in order to create customized
+ representations. For this reason it is not optimized and not minified
+ The necessary css rules are embedded in db_diagram.html file
+ 
+ last modified 30 Jan 2013 by Paolo Caruccio
+====================================================================*/
+
+.dbdia-title-box{border: 1px solid #000000;}
+#dbdia-menu-wrapper, .ui-widget{display: none !important;}

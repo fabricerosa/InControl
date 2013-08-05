@@ -26,12 +26,6 @@ def projects_list():
     if not session.searchValues:
         session.searchValues = dict(project={field.name : [True if field.type == 'boolean' else None, field.type] for field in db.project})
 
-    os.system('cls')
-    print session.searchValues
-
-    print session['searchValues']['project']['end_date'][1]
-   
-
     if request.vars['btsearch']:
       for i in range(len(request.vars)):            
             if request.vars.items()[i][0] in session['searchValues']['project']:
@@ -105,6 +99,10 @@ def projects_list():
 
     selectable = lambda ids: delete_selectable_rows(ids)  
     
+    if len(request.args)>1:
+        if request.args[-2]=='new' or request.args[-3]=='edit':
+            mark_not_empty(db.project)
+
 
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
         deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, selectable = selectable, searchable=True, links=links, user_signature=False, left=left, 
@@ -117,11 +115,11 @@ def projects_list():
   
     # Define the page tilte
     if len(request.args)>1:       
-        if  request.args[-2]=='new' and project.create_form:
+        if request.args[-2]=='new' and project.create_form:
             title = T('New Project')
-        elif  request.args[-3]=='edit':
+        elif request.args[-3]=='edit':
             title = T('Edit Project')
-        elif  request.args[-3]=='view':
+        elif request.args[-3]=='view':
             title = T('Project View')
 
     return dict(projects=project, titles=title)

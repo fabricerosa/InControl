@@ -611,3 +611,91 @@ def manage():
     else:
         return dict()
     return grid if request.extension=='load' else dict(grid=grid)
+
+    # ###########################################################
+# ## database diagram
+# ##
+# ## last modified 31 Jan 2013 by Paolo Caruccio
+# ###########################################################
+
+response.menu.append([T('diagram'), False, URL('db_diagram')])
+
+def get_table_indexed_columns(tablename):
+    indexes = 'N/A'
+    if db._uri.startswith('sqlite:'):
+        indexes = '-'
+        indexes_list = db.executesql("PRAGMA index_list(%s);" % tablename)
+        if indexes_list:
+            for index in indexes_list:
+                index_name = index[1]
+                indexed_columns = [
+                        indexed_column[2] 
+                        for indexed_column in 
+                           db.executesql("PRAGMA index_info(%s);" % index_name)
+                        ]
+            indexes = ", ".join(indexed_columns)
+    return indexes
+
+def db_diagram():
+    response.view = 'db_diagram.html'
+    nodes = {}
+
+    if not 'db' in databases:
+        return dict(databases=None, nodes=nodes)
+
+    strong_entities = db.tables[:]
+    for tablename in db.tables:
+        if not tablename.endswith('_archive', -8):
+            table_fields = [field for field in db[tablename]]
+            primarykey = 'id'
+            if hasattr(tablename, '_primarykey'):
+                if tablename._primarykey:
+                    pk = tablename[tablename._primarykey[0]]
+                    primarykey = pk.name
+            stack = []
+            for fld in db[tablename]._referenced_by:
+                if not fld.tablename.endswith('_archive', -8):
+                    if not tablename.startswith('auth_', 0, 5):
+                        stack.append((fld.tablename, fld.name))
+                        if fld.tablename in strong_entities:
+                            strong_entities.remove(fld.tablename)
+                    else:
+                        if fld.tablename.startswith('auth_', 0, 5):
+                            stack.append((fld.tablename, fld.name))
+                            if fld.tablename in strong_entities:
+                                strong_entities.remove(fld.tablename)
+            nodes[tablename] = {'linked_nodes': stack[:]}
+            cascade_chain = []
+            while stack:
+                cur_tbl = stack.pop()
+                cascade_chain.append(cur_tbl)
+                for fld in db[cur_tbl[0]]._referenced_by:
+                    if not fld.tablename.endswith('_archive', -8):
+                        if not tablename.startswith('auth_', 0, 5):
+                            stack.append((fld.tablename, fld.name))
+                        else:
+                            if fld.tablename.startswith('auth_', 0, 5):
+                                stack.append((fld.tablename, fld.name))
+            cascade_chain_uniquefied = list(set([t[0] for t in cascade_chain]))
+            nodes[tablename]['cascade_chain'] = cascade_chain_uniquefied
+            nodes[tablename]['table_fields'] = table_fields
+            nodes[tablename]['primary_key'] = primarykey
+            nodes[tablename]['indexed_columns'] = get_table_indexed_columns(
+                                                                     tablename)
+
+    n = 0
+    for entity in strong_entities:
+        if entity.endswith('_archive', -8):
+            nodes[entity.split('_archive')[0]]['has_archive'] = True
+        else:
+            n += 1
+            e = 0
+            node = nodes[entity]
+            sn = str(n)
+            node['css_class'] = 'chain'+sn+'_el0 strong-entity'
+            for chain_link in node['cascade_chain']:
+                e += 1
+                se = str(e)
+                nodes[chain_link]['css_class'] = 'chain'+sn+'_el'+se
+
+    return dict(databases=databases, nodes=nodes)
