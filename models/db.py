@@ -94,9 +94,7 @@ import string
 import datetime
 from datetime import timedelta
 from plugin_solidform import SOLIDFORM
-from plugin_tablecheckbox import TableCheckbox
-from plugin_solidtable import SOLIDTABLE
-from gluon.contrib.populate import populate
+import pdb
 
 import os     
 
@@ -141,18 +139,44 @@ db.define_table(
         format="%(description)s"
         )
 
+ENTITY_TYPE = {"client": T("Client"), "provider": T("Provider"), "partner": T("Partner"), "mix": T("Mix")}
+
+db.define_table(
+        'entity',
+        Field('name', required=True),
+        Field('short_name'),
+        Field('nif', required=True),
+        Field('country'),
+        Field("entity_type", requires=IS_IN_SET(ENTITY_TYPE), default="client", writable=False),
+        Field('is_active', 'boolean', default=True),
+        format="%(name)s")
+
+db.define_table(
+        'acknowledgment_type',
+        Field('name', required=True),
+        Field('is_active', 'boolean', default=True),
+        format="%(name)s")
+if db(db.acknowledgment_type).isempty():
+        db.acknowledgment_type.bulk_insert([{'name':'Cost'}, {'name':'Profit'}])
+
+db.define_table(
+        'acknowledgment',
+        Field('type_id', 'reference acknowledgment_type', required=True),
+        Field('entity_id', 'reference entity', required=True),
+        )
+
+
 db.define_table('role', 
         Field('name', required=True),
         Field('is_active', 'boolean', default=True),
-        format="%(name)s"
-        )
+        format="%(name)s")
 if db(db.role).isempty():
         db.role.bulk_insert([{'name':'DM'}, {'name':'EM'}, {'name':'DEV'}, {'name':'Senior'}, {'name':'Junior'}, {'name':'Expert'}, {'name':'License'}, {'name':'Costs'}])
 
 db.define_table('team',
-        Field('user_id', db.auth_user, required=True),
-        Field('project_id', db.project, required=True),
-        Field('role_id', db.role, required=True),
+        Field('user_id', 'reference auth_user', required=True),
+        Field('project_id', 'reference project', required=True),
+        Field('role_id', 'reference role', required=True),
         Field('budget', 'integer',default=0),
         Field('rate', 'decimal(8,2)',default=0),
         Field('cost_value', 'decimal(8,2)',default=0),

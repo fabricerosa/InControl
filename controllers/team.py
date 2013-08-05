@@ -58,6 +58,10 @@ def team_project_list():
         create=auth.has_membership('Manager'), deletable=False, editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, user_signature=False,
         args=[projectId], onvalidation=check_user, createargs={'labels':labels})
 
+    print 'sdfkgjsdjfg'
+    if request.args(-2) == 'new' or request.args(-3) == 'edit':
+        print team.element(_type='submit')
+        team.element(_type='submit')['_value'] = 'foi desta'
     
     # newMember = A(SPAN(_class='icon plus icon-plus'),'New Member',_class='w2p_trap button btn',_title='New Member',
     #     _href=URL("team","team_project_edit", args=[projectId]))
