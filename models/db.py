@@ -141,6 +141,24 @@ db.define_table(
         format="%(description)s"
         )
 
+db.define_table(
+        'address',
+        Field('street_name', required=True),
+        Field('locality', required=True),
+        Field('postal_code', required=True),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now),        
+        format="%(locality)s")
+
+db.define_table(
+        'contact',
+        Field('email'),
+        Field('fax'),
+        Field('phone'),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now),        
+        )
+
 ENTITY_TYPE = {"client": T("Client"), "provider": T("Provider"), "partner": T("Partner"), "mix": T("Mix")}
 
 db.define_table(
@@ -148,9 +166,13 @@ db.define_table(
         Field('name', required=True),
         Field('short_name'),
         Field('nif', required=True),
-        Field('country'),
+        Field('country_id', 'reference country'),
         Field("entity_type", requires=IS_IN_SET(ENTITY_TYPE), default="client", writable=False),
+        Field('address_id', 'reference address'),
+        Field('contact_id', 'reference contact'),
         Field('is_active', 'boolean', default=True),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now),        
         format="%(name)s")
 
 db.define_table(
@@ -165,8 +187,35 @@ db.define_table(
         'acknowledgment',
         Field('type_id', 'reference acknowledgment_type', required=True),
         Field('entity_id', 'reference entity', required=True),
+        Field('cost_value', 'decimal(8,2)', default=user_id),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now),
         )
 
+TRANSACTION_TYPE = {"debit": T("Debit"), "credit": T("Credit")}
+TRANSACTION_STATE = {"real": T("Real"), "forecast": T("Forecast")}
+db.define_table(
+        'project_transaction',
+        Field('acknowledgment_id', 'reference acknowledgment', required=True),
+        Field("transaction_type", requires=IS_IN_SET(TRANSACTION_TYPE), default="credit", writable=False, required=True),
+        Field('project_id', 'reference project', required=True),
+        Field('reference_date', 'datetime', default=request.now),
+        Field('net_value', 'decimal(8,2)', default=user_id),
+        Field('vat_value', 'decimal(8,2)', default=user_id),
+        Field("transaction_state", requires=IS_IN_SET(TRANSACTION_STATE), default="forecast", writable=False, required=True),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now),
+        )
+
+
+db.define_table(
+        'project_billing',
+        Field('project_id', 'reference project', required=True),
+        Field('client_id', 'reference entity', required=True),
+        Field('description', required=True),
+        Field('created_by', 'reference auth_user', default=user_id),
+        Field('created_on', 'datetime', default=request.now)
+        )
 
 db.define_table('role', 
         Field('name', required=True),

@@ -85,11 +85,6 @@ def projects_list():
         db.project.created_on,
         db.project.is_active)
 
-    os.system('cls')
-    for field in db.project._defaults:
-        print field
-        #print db.project.fields[i].type()
-
     #Define headers as tuples/dictionaries
     headers = {
            'project.start_date': 'Start date',

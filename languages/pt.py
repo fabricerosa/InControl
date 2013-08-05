@@ -206,6 +206,7 @@
 'Profile': 'Profile',
 'Project Id': 'Project Id',
 'Project List': 'Project List',
+'Project View': 'Project View',
 'Projectid': 'Projectid',
 'Projects': 'Projects',
 'Projects List': 'Projects List',
