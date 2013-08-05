@@ -11,8 +11,6 @@ def projectSearch(fields, url):
             ['start_date', 'end_date'],
             ['is_active',None]]
 
-    print db.project.fields
-
     db.project.type_id.default = session['searchValues']['project']['type_id']
     db.project.state_id.default = session['searchValues']['project']['state_id']
     db.project.description.default = session['searchValues']['project']['description']
@@ -47,6 +45,8 @@ def projects_list():
             if request.vars.items()[i][0] in session['searchValues']['project']:
                 if str(request.vars.items()[i][0]).find('_date')!= -1 or str(request.vars.items()[i][0]).find('_id')!= -1:
                     session['searchValues']['project'][request.vars.items()[i][0]] =  None
+                elif str(request.vars.items()[i][0]).find('is_')!= -1:
+                    session['searchValues']['project'][request.vars.items()[i][0]] = True
                 else:
                      session['searchValues']['project'][request.vars.items()[i][0]] =  ''              
 
@@ -105,11 +105,15 @@ def projects_list():
     links = [lambda row: A(SPAN(_class='team'),'Team',_class='w2p_trap button btn',_title='View  Team',
         _href=URL("team","team_project_list", args=[row.id if len(request.args)>1 else row.project.id]))]
 
-
+    selectable = lambda ids: delete_selectable_rows(ids)  
+    
 
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
-        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
+        deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, selectable = selectable, searchable=True, links=links, user_signature=False, left=left, 
+        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date, selectable_submit_button='Delete selected rows', ui='jquery-ui')
+    
+    #pdb.set_trace()          
+    #pdb.stop_trace()
 
     title=T('Project List')
   
@@ -128,6 +132,15 @@ def projects_list():
 def validate_end_date(form):
     if form.vars.end_date <= form.vars.start_date:
         form.errors.end_date = T("end date must be later than start date")
+
+def delete_selectable_rows(ids):
+    if not ids:
+            session.flash='Please Select the Check-box to Delete'
+    else:
+        to_delete=db(db.project.id.belongs(ids))
+        to_delete.delete()
+    
+   
 
 
     
