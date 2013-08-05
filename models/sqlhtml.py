@@ -2362,7 +2362,7 @@ class SQLFORM(FORM):
             limitby = None
 
         if rows:
-            htmltable = TABLE(THEAD(head),_style='width:100% !important;')
+            htmltable = TABLE(THEAD(head),_style='width: auto !important;' if request.args(-3) == 'edit' or request.args(-3) == 'view' or request.args(-3) == 'new' else 'width:100% !important;')
             tbody = TBODY()
             numrec = 0
             for row in rows:
