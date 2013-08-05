@@ -85,6 +85,11 @@ def projects_list():
         db.project.created_on,
         db.project.is_active)
 
+    os.system('cls')
+    for field in db.project._defaults:
+        print field
+        #print db.project.fields[i].type()
+
     #Define headers as tuples/dictionaries
     headers = {
            'project.start_date': 'Start date',
@@ -108,7 +113,7 @@ def projects_list():
 
     project = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order, create=auth.has_membership('Manager'), details=True, 
         deletable=auth.has_membership('Manager'), editable=auth.has_membership('Manager'), maxtextlength=64, paginate=25, searchable=True, links=links, user_signature=False, left=left, 
-        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date)
+        search_widget=searchForms, editargs=edit_new_args,createargs=edit_new_args, onvalidation=validate_end_date, selectable=True)
 
     title=T('Project List')
   
